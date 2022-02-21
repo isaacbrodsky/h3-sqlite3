@@ -25,7 +25,9 @@ jobs:
           cd /tmp
           git clone https://github.com/uber/h3
           cd h3
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS=-fPIC .
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS=-fPIC -DBUILD_BENCHMARKS​=OFF -DBUILD_FILTERS=OFF -DBUILD_GENERATORS=OFF -DBUILD_TESTING=OFF -DENABLE_DOCS=OFF -DBUILD_FUZZERS=OFF ..
           make
           sudo make install
 
