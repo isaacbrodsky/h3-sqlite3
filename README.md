@@ -1,6 +1,9 @@
 # h3-sqlite3
 
-h3-sqlite3 provides bindings for the [H3](https://github.com/uber/h3) library to SQLite3.
+[![test-linux](https://github.com/isaacbrodsky/h3-sqlite3/workflows/test-linux/badge.svg)](https://github.com/isaacbrodsky/h3-sqlite3/actions)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
+h3-sqlite3 provides bindings for the [H3](https://github.com/uber/h3) library to [SQLite3](https://sqlite.org/).
 
 # Compile
 
@@ -9,7 +12,10 @@ Install `libsqlite3-dev` on Debian like systems.
 To compile:
 
 ```bash
-cc -g -fPIC -shared h3ext.c -lh3 -o h3ext.so
+mkdir build
+cd build
+cmake ..
+make
 ```
 
 TODO: You must compile H3 with `-fPIC` too - this should all be in a single build script!
@@ -19,15 +25,15 @@ TODO: You must compile H3 with `-fPIC` too - this should all be in a single buil
 Install `sqlite3` on Debian like systems and run `sqlite3`.
 
 ```sqlite
-.load ./h3ext
-select printf('%X', latLngToCell(0,0,0));
+.load ./libh3ext
+select printf('%x', latLngToCell(0,0,0));
 ```
 
-You should see `8075FFFFFFFFFFF` as the output.
+You should see `8075fffffffffff` as the output.
 
 # TODO
 
-* Better build and CI system
+* Better build and CI system, including testing, coverage, etc.
 * All H3 functions supported
 * Support for [Spatialite](https://www.gaia-gis.it/fossil/libspatialite/index)
 * Support for [DuckDB](https://github.com/duckdb/duckdb/issues/1792)
