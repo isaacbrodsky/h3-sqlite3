@@ -1,0 +1,47 @@
+name: deploy-website
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  tests:
+    name: Deploy Website ${{ matrix.compiler }}
+    runs-on: ubuntu-latest
+    env:
+      CC: ${{ matrix.compiler }}
+
+    strategy:
+      matrix:
+        compiler: [clang]
+
+    steps:
+      - uses: actions/checkout@v2.4.0
+
+      - name: Install H3
+        run: |
+          cd /tmp
+          git clone https://github.com/uber/h3
+          cd h3
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS=-fPIC .
+          make
+          sudo make install
+
+      - name: Install Doxygen
+        run: |
+          sudo apt update
+          sudo apt-get install doxygen graphviz clang-format-9
+
+      - name: Configure build
+        run: cmake -Bbuild -DBUILD_SHARED_LIBS=ON -DWARNINGS_AS_ERRORS=ON .
+
+      - name: Build
+        working-directory: build
+        run: make docs
+
+      # Deploy the book's HTML to gh-pages branch
+      - name: GitHub Pages action
+        uses: peaceiris/actions-gh-pages@v3.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/dev-docs/_build/html
