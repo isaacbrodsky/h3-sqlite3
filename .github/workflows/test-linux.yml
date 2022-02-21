@@ -1,0 +1,49 @@
+name: test-linux
+
+on:
+  push:
+    branches: [master, stable-*]
+  pull_request:
+    branches: [master, stable-*]
+
+jobs:
+  tests:
+    name: Test Compile ${{ matrix.compiler }}
+    runs-on: ubuntu-latest
+    env:
+      CC: ${{ matrix.compiler }}
+
+    strategy:
+      matrix:
+        compiler: [clang, gcc]
+
+    steps:
+      - uses: actions/checkout@v2.4.0
+
+      - name: Install H3
+        run: |
+          cd /tmp
+          git clone https://github.com/uber/h3
+          cd h3
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS=-fPIC .
+          make
+          sudo make install
+
+      - name: Install Doxygen
+        run: |
+          sudo apt update
+          sudo apt-get install doxygen graphviz clang-format-9
+
+      - name: Configure build
+        run: cmake -Bbuild -DBUILD_SHARED_LIBS=ON -DWARNINGS_AS_ERRORS=ON .
+
+      - name: Formatting check
+        working-directory: build
+        run: |
+          clang-format-9 --version
+          make format
+          git diff --exit-code
+
+      - name: Build
+        working-directory: build
+        run: make
