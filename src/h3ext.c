@@ -66,6 +66,14 @@ static void sql_cellToParent(sqlite3_context *context, int argc,
   }
 }
 
+static void sql_getResolution(sqlite3_context *context, int argc,
+                              sqlite3_value **argv) {
+  assert(argc == 1);
+  H3Index index = sqlite3_value_int64(argv[0]);
+  int res = getResolution(index);
+  sqlite3_result_int(context, res);
+}
+
 #ifdef _WIN32
 __declspec(dllexport)
 #endif
@@ -95,6 +103,12 @@ __declspec(dllexport)
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_cellToParent, 0, 0);
+  }
+  if (rc == SQLITE_OK) {
+    rc = sqlite3_create_function(db, "getResolution", 1,
+                                 SQLITE_UTF8 | SQLITE_INNOCUOUS |
+                                     SQLITE_DETERMINISTIC,
+                                 0, sql_getResolution, 0, 0);
   }
   return rc;
 }
