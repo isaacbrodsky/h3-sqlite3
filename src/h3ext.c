@@ -52,6 +52,20 @@ static void sql_cellToLng(sqlite3_context *context, int argc,
   }
 }
 
+static void sql_cellToParent(sqlite3_context *context, int argc,
+                             sqlite3_value **argv) {
+  assert(argc == 2);
+  H3Index index = sqlite3_value_int64(argv[0]);
+  int res = sqlite3_value_int(argv[1]);
+  H3Index parent;
+  H3Error err = cellToParent(index, res, &parent);
+  if (err == E_SUCCESS) {
+    sqlite3_result_int64(context, parent);
+  } else {
+    sqlite3_result_error(context, "H3 function call failed", -1);
+  }
+}
+
 #ifdef _WIN32
 __declspec(dllexport)
 #endif
@@ -75,6 +89,12 @@ __declspec(dllexport)
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_cellToLng, 0, 0);
+  }
+  if (rc == SQLITE_OK) {
+    rc = sqlite3_create_function(db, "cellToParent", 2,
+                                 SQLITE_UTF8 | SQLITE_INNOCUOUS |
+                                     SQLITE_DETERMINISTIC,
+                                 0, sql_cellToParent, 0, 0);
   }
   return rc;
 }
