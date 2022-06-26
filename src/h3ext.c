@@ -54,9 +54,14 @@ static void sql_cellToLng(sqlite3_context *context, int argc,
 
 static void sql_cellToParent(sqlite3_context *context, int argc,
                              sqlite3_value **argv) {
-  assert(argc == 2);
+  assert(argc == 2 || argc == 1);
+  int res;
   H3Index index = sqlite3_value_int64(argv[0]);
-  int res = sqlite3_value_int(argv[1]);
+  if (argc == 1) {
+    res = getResolution(index) - 1;
+  } else {
+    res = sqlite3_value_int(argv[1]);
+  }
   H3Index parent;
   H3Error err = cellToParent(index, res, &parent);
   if (err == E_SUCCESS) {
@@ -97,6 +102,13 @@ __declspec(dllexport)
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_cellToLng, 0, 0);
+  }
+  if (rc == SQLITE_OK) {
+    // Infer resolution
+    rc = sqlite3_create_function(db, "cellToParent", 1,
+                                 SQLITE_UTF8 | SQLITE_INNOCUOUS |
+                                     SQLITE_DETERMINISTIC,
+                                 0, sql_cellToParent, 0, 0);
   }
   if (rc == SQLITE_OK) {
     rc = sqlite3_create_function(db, "cellToParent", 2,
