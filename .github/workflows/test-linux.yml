@@ -49,3 +49,7 @@ jobs:
       - name: Build
         working-directory: build
         run: make
+
+      - name: Test SQLite3
+        working-directory: build
+        run: sqlite3 -echo -bail < "../test/test.sql"
