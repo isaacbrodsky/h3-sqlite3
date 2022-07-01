@@ -7,15 +7,54 @@ on:
     branches: [master, stable-*]
 
 jobs:
-  tests:
-    name: Test Compile ${{ matrix.compiler }}
+  test-clang:
+    name: Test Compile clang
     runs-on: ubuntu-latest
     env:
-      CC: ${{ matrix.compiler }}
+      CC: clang
 
-    strategy:
-      matrix:
-        compiler: [clang, gcc]
+    steps:
+      - uses: actions/checkout@v2.4.0
+
+      - name: Install H3
+        run: |
+          cd /tmp
+          git clone https://github.com/uber/h3
+          cd h3
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS=-fPIC -DBUILD_BENCHMARKS​=OFF -DBUILD_FILTERS=OFF -DBUILD_GENERATORS=OFF -DBUILD_TESTING=OFF -DENABLE_DOCS=OFF -DBUILD_FUZZERS=OFF ..
+          make
+          sudo make install
+
+      - name: Install Doxygen, clang-format
+        run: |
+          sudo apt update
+          sudo apt-get install doxygen graphviz clang-format-9
+
+      - name: Configure build
+        run: cmake -Bbuild -DBUILD_SHARED_LIBS=ON -DWARNINGS_AS_ERRORS=ON .
+
+      - name: Formatting check
+        working-directory: build
+        run: |
+          clang-format-9 --version
+          make format
+          git diff --exit-code
+
+      - name: Build
+        working-directory: build
+        run: make
+
+      - name: Tests
+        working-directory: build
+        run: make test
+
+  coverage-gcc:
+    name: Test Compile gcc
+    runs-on: ubuntu-latest
+    env:
+      CC: gcc
 
     steps:
       - uses: actions/checkout@v2.4.0
