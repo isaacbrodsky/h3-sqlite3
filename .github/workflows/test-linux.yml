@@ -31,13 +31,13 @@ jobs:
           make
           sudo make install
 
-      - name: Install Doxygen
+      - name: Install Doxygen, clang-format, lcov
         run: |
           sudo apt update
-          sudo apt-get install doxygen graphviz clang-format-9
+          sudo apt-get install doxygen graphviz clang-format-9 lcov
 
       - name: Configure build
-        run: cmake -Bbuild -DBUILD_SHARED_LIBS=ON -DWARNINGS_AS_ERRORS=ON .
+        run: cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug  -DBUILD_SHARED_LIBS=ON -DWARNINGS_AS_ERRORS=ON .
 
       - name: Formatting check
         working-directory: build
@@ -50,6 +50,11 @@ jobs:
         working-directory: build
         run: make
 
-      - name: Test SQLite3
+      - name: Tests
         working-directory: build
-        run: sqlite3 -echo -bail < "../test/test.sql"
+        run: make coverage
+
+      - uses: coverallsapp/github-action@master
+        with:
+          path-to-lcov: ./build/coverage.cleaned.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
