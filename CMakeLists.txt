@@ -10,6 +10,8 @@ project(h3-sqlite3 LANGUAGES C)
 
 set(H3EXT_VERSION 4.0.0)
 
+option(ENABLE_COVERAGE "Enable compiling tests with coverage." ON)
+
 set(LIB_SOURCE_FILES src/h3ext.c src/h3ext.h)
 set(OTHER_SOURCE_FILES "")
 
@@ -27,6 +29,13 @@ if(NOT WIN32)
     target_compile_options(h3ext PRIVATE -Wall)
 
     target_compile_options(h3ext PRIVATE $<$<CONFIG:Debug>:-gdwarf-2 -g3 -O0 -fno-inline -fno-eliminate-unused-debug-types>)
+
+    if(ENABLE_COVERAGE)
+        target_compile_options(h3ext PRIVATE $<$<CONFIG:Debug>:--coverage>)
+        # --coverage is not passed to the linker, so this option is needed
+        # to fully enable coverage.
+        target_link_options(h3ext PRIVATE $<$<CONFIG:Debug>:--coverage>)
+    endif()
 
     option(WARNINGS_AS_ERRORS "Warnings are treated as errors" OFF)
     if(WARNINGS_AS_ERRORS)
@@ -93,5 +102,37 @@ else()
         )
 endif()
 
-# TODO: Testing
+if(ENABLE_COVERAGE)
+    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/scripts/coverage.sh"
+                    INPUT "${CMAKE_CURRENT_SOURCE_DIR}/scripts/coverage.sh.in")
+    set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "coverage.info")
+    set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "coverage.cleaned.info")
+    set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "coverage")
+    add_custom_target(coverage
+        COMMAND bash "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/scripts/coverage.sh" "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
+    add_custom_target(clean-coverage
+        # Before running coverage, clear all counters
+        COMMAND lcov --rc lcov_branch_coverage=1 --directory '${CMAKE_CURRENT_BINARY_DIR}' --zerocounters
+        COMMENT "Zeroing counters"
+        )
+endif()
+
+enable_testing()
+
+macro(add_h3sqlite_test name srcfile)
+    add_test(NAME ${name} COMMAND sh -c "sqlite3 -echo -bail < ${CMAKE_CURRENT_SOURCE_DIR}/${srcfile}")
+
+    if(ENABLE_COVERAGE)
+        add_custom_target(${name}_coverage
+            COMMAND sh -c "sqlite3 -bail <${CMAKE_CURRENT_SOURCE_DIR}/${srcfile}"
+            COMMENT "Running ${name}_coverage"
+            )
+
+        add_dependencies(coverage ${name}_coverage)
+        add_dependencies(${name}_coverage clean-coverage)
+    endif()
+endmacro()
+
+add_h3sqlite_test(test_sql test/test.sql)
+
 # TODO: Installation
