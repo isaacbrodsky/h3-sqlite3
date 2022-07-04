@@ -79,6 +79,14 @@ static void sql_getResolution(sqlite3_context *context, int argc,
   sqlite3_result_int(context, res);
 }
 
+static void sql_isValidCell(sqlite3_context *context, int argc,
+                            sqlite3_value **argv) {
+  assert(argc == 1);
+  H3Index index = sqlite3_value_int64(argv[0]);
+  int res = isValidCell(index);
+  sqlite3_result_int(context, res);
+}
+
 #ifdef _WIN32
 __declspec(dllexport)
 #endif
@@ -121,6 +129,12 @@ __declspec(dllexport)
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_getResolution, 0, 0);
+  }
+  if (rc == SQLITE_OK) {
+    rc = sqlite3_create_function(db, "isValidCell", 1,
+                                 SQLITE_UTF8 | SQLITE_INNOCUOUS |
+                                     SQLITE_DETERMINISTIC,
+                                 0, sql_isValidCell, 0, 0);
   }
   return rc;
 }
