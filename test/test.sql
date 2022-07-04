@@ -5,4 +5,5 @@ select printf('%f', cellToLng(latLngToCell(0,0,0)));
 select printf('%x', cellToParent(latLngToCell(0,0,5), 3));
 select printf('%x', cellToParent(latLngToCell(0,0,5)));
 select printf('%d', getResolution(latLngToCell(0,0,5)));
-
+select printf('%d', isValidCell(0));
+select printf('%d', isValidCell(latLngToCell(0,0,5)));

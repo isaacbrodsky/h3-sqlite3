@@ -31,12 +31,20 @@ select printf('%x', latLngToCell(0,0,0));
 
 You should see `8075fffffffffff` as the output.
 
+# Implemented functions
+
+* latLngToCell
+* cellToLat
+* cellToLng
+* cellToParent
+* getResolution
+* isValidCell
+
 # TODO
 
 * Better build and CI system, including testing, coverage, etc.
 * All H3 functions supported
 * Support for [Spatialite](https://www.gaia-gis.it/fossil/libspatialite/index)
-* Support for [DuckDB](https://github.com/duckdb/duckdb/issues/1792)
 
 # License
 
