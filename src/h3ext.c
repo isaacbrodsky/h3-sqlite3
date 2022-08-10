@@ -79,11 +79,62 @@ static void sql_getResolution(sqlite3_context *context, int argc,
   sqlite3_result_int(context, res);
 }
 
+static void sql_getBaseCellNumber(sqlite3_context *context, int argc,
+                                  sqlite3_value **argv) {
+  assert(argc == 1);
+  H3Index index = sqlite3_value_int64(argv[0]);
+  int res = getBaseCellNumber(index);
+  sqlite3_result_int(context, res);
+}
+
 static void sql_isValidCell(sqlite3_context *context, int argc,
                             sqlite3_value **argv) {
   assert(argc == 1);
   H3Index index = sqlite3_value_int64(argv[0]);
   int res = isValidCell(index);
+  sqlite3_result_int(context, res);
+}
+
+static void sql_stringToH3(sqlite3_context *context, int argc,
+                           sqlite3_value **argv) {
+  assert(argc == 1);
+  // Return type is unsigned
+  const char *indexStr = (const char *)sqlite3_value_text(argv[0]);
+  H3Index out;
+  H3Error err = stringToH3(indexStr, &out);
+  if (err == E_SUCCESS) {
+    sqlite3_result_int64(context, out);
+  } else {
+    sqlite3_result_error(context, "H3 function call failed", -1);
+  }
+}
+
+static void sql_h3ToString(sqlite3_context *context, int argc,
+                           sqlite3_value **argv) {
+  assert(argc == 1);
+  H3Index index = sqlite3_value_int64(argv[0]);
+  char out[17] = {0};
+  H3Error err = h3ToString(index, out, sizeof(out));
+  if (err == E_SUCCESS) {
+    sqlite3_result_text(context, out, -1, SQLITE_TRANSIENT);
+  } else {
+    sqlite3_result_error(context, "H3 function call failed", -1);
+  }
+}
+
+static void sql_isResClassIII(sqlite3_context *context, int argc,
+                              sqlite3_value **argv) {
+  assert(argc == 1);
+  H3Index index = sqlite3_value_int64(argv[0]);
+  int res = isResClassIII(index);
+  sqlite3_result_int(context, res);
+}
+
+static void sql_isPentagon(sqlite3_context *context, int argc,
+                           sqlite3_value **argv) {
+  assert(argc == 1);
+  H3Index index = sqlite3_value_int64(argv[0]);
+  int res = isPentagon(index);
   sqlite3_result_int(context, res);
 }
 
@@ -131,10 +182,40 @@ __declspec(dllexport)
                                  0, sql_getResolution, 0, 0);
   }
   if (rc == SQLITE_OK) {
+    rc = sqlite3_create_function(db, "getBaseCellNumber", 1,
+                                 SQLITE_UTF8 | SQLITE_INNOCUOUS |
+                                     SQLITE_DETERMINISTIC,
+                                 0, sql_getBaseCellNumber, 0, 0);
+  }
+  if (rc == SQLITE_OK) {
+    rc = sqlite3_create_function(db, "stringToH3", 1,
+                                 SQLITE_UTF8 | SQLITE_INNOCUOUS |
+                                     SQLITE_DETERMINISTIC,
+                                 0, sql_stringToH3, 0, 0);
+  }
+  if (rc == SQLITE_OK) {
+    rc = sqlite3_create_function(db, "h3ToString", 1,
+                                 SQLITE_UTF8 | SQLITE_INNOCUOUS |
+                                     SQLITE_DETERMINISTIC,
+                                 0, sql_h3ToString, 0, 0);
+  }
+  if (rc == SQLITE_OK) {
     rc = sqlite3_create_function(db, "isValidCell", 1,
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_isValidCell, 0, 0);
+  }
+  if (rc == SQLITE_OK) {
+    rc = sqlite3_create_function(db, "isResClassIII", 1,
+                                 SQLITE_UTF8 | SQLITE_INNOCUOUS |
+                                     SQLITE_DETERMINISTIC,
+                                 0, sql_isResClassIII, 0, 0);
+  }
+  if (rc == SQLITE_OK) {
+    rc = sqlite3_create_function(db, "isPentagon", 1,
+                                 SQLITE_UTF8 | SQLITE_INNOCUOUS |
+                                     SQLITE_DETERMINISTIC,
+                                 0, sql_isPentagon, 0, 0);
   }
   return rc;
 }
