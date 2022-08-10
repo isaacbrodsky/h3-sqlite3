@@ -38,7 +38,12 @@ You should see `8075fffffffffff` as the output.
 * cellToLng
 * cellToParent
 * getResolution
+* getBaseCellNumber​
+* stringToH3​
+* h3ToString​
 * isValidCell
+* isResClassIII​
+* isPentagon
 
 # TODO
 
