@@ -1,6 +1,7 @@
 # h3-sqlite3
 
 [![test-linux](https://github.com/isaacbrodsky/h3-sqlite3/workflows/test-linux/badge.svg)](https://github.com/isaacbrodsky/h3-sqlite3/actions)
+[![H3 Version](https://img.shields.io/static/v1?label=h3%20api&message=v4.0.0&color=blue)](https://github.com/uber/h3/releases/tag/v4.0.0)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 h3-sqlite3 provides bindings for the [H3](https://github.com/uber/h3) library to [SQLite3](https://sqlite.org/).

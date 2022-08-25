@@ -23,7 +23,7 @@ jobs:
       - name: Install H3
         run: |
           cd /tmp
-          git clone https://github.com/uber/h3
+          git clone https://github.com/uber/h3 -b v4.0.0
           cd h3
           mkdir build
           cd build
