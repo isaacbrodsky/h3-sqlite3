@@ -38,8 +38,8 @@ find_library(H3_LIB h3)
 target_link_libraries(h3ext PUBLIC h3)
 
 # Automatic code formatting
-# Give preference to clang-format-9
-find_program(CLANG_FORMAT_PATH NAMES clang-format-9 clang-format)
+# Give preference to clang-format-14
+find_program(CLANG_FORMAT_PATH NAMES clang-format-14 clang-format)
 cmake_dependent_option(
     ENABLE_FORMAT "Enable running clang-format before compiling" ON
     "CLANG_FORMAT_PATH" OFF)
