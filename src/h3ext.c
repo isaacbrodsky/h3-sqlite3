@@ -146,73 +146,73 @@ __declspec(dllexport)
   int rc = SQLITE_OK;
   SQLITE_EXTENSION_INIT2(pApi);
   (void)pzErrMsg; /* Unused parameter */
-  rc = sqlite3_create_function(db, "latLngToCell", 3,
+  rc = sqlite3_create_function(db, "h3_latlng_to_cell", 3,
                                SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                    SQLITE_DETERMINISTIC,
                                0, sql_latLngToCell, 0, 0);
   if (rc == SQLITE_OK) {
-    rc = sqlite3_create_function(db, "cellToLat", 1,
+    rc = sqlite3_create_function(db, "h3_cell_to_lat", 1,
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_cellToLat, 0, 0);
   }
   if (rc == SQLITE_OK) {
-    rc = sqlite3_create_function(db, "cellToLng", 1,
+    rc = sqlite3_create_function(db, "h3_cell_to_lng", 1,
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_cellToLng, 0, 0);
   }
   if (rc == SQLITE_OK) {
     // Infer resolution
-    rc = sqlite3_create_function(db, "cellToParent", 1,
+    rc = sqlite3_create_function(db, "h3_cell_to_parent", 1,
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_cellToParent, 0, 0);
   }
   if (rc == SQLITE_OK) {
-    rc = sqlite3_create_function(db, "cellToParent", 2,
+    rc = sqlite3_create_function(db, "h3_cell_to_parent", 2,
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_cellToParent, 0, 0);
   }
   if (rc == SQLITE_OK) {
-    rc = sqlite3_create_function(db, "getResolution", 1,
+    rc = sqlite3_create_function(db, "h3_get_resolution", 1,
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_getResolution, 0, 0);
   }
   if (rc == SQLITE_OK) {
-    rc = sqlite3_create_function(db, "getBaseCellNumber", 1,
+    rc = sqlite3_create_function(db, "h3_get_base_cell_number", 1,
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_getBaseCellNumber, 0, 0);
   }
   if (rc == SQLITE_OK) {
-    rc = sqlite3_create_function(db, "stringToH3", 1,
+    rc = sqlite3_create_function(db, "h3_string_to_h3", 1,
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_stringToH3, 0, 0);
   }
   if (rc == SQLITE_OK) {
-    rc = sqlite3_create_function(db, "h3ToString", 1,
+    rc = sqlite3_create_function(db, "h3_h3_to_string", 1,
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_h3ToString, 0, 0);
   }
   if (rc == SQLITE_OK) {
-    rc = sqlite3_create_function(db, "isValidCell", 1,
+    rc = sqlite3_create_function(db, "h3_is_valid_cell", 1,
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_isValidCell, 0, 0);
   }
   if (rc == SQLITE_OK) {
-    rc = sqlite3_create_function(db, "isResClassIII", 1,
+    rc = sqlite3_create_function(db, "h3_is_res_class_iii", 1,
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_isResClassIII, 0, 0);
   }
   if (rc == SQLITE_OK) {
-    rc = sqlite3_create_function(db, "isPentagon", 1,
+    rc = sqlite3_create_function(db, "h3_is_pentagon", 1,
                                  SQLITE_UTF8 | SQLITE_INNOCUOUS |
                                      SQLITE_DETERMINISTIC,
                                  0, sql_isPentagon, 0, 0);

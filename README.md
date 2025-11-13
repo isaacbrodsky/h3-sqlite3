@@ -34,17 +34,17 @@ You should see `8075fffffffffff` as the output.
 
 # Implemented functions
 
-* latLngToCell
-* cellToLat
-* cellToLng
-* cellToParent
-* getResolution
-* getBaseCellNumber​
-* stringToH3​
-* h3ToString​
-* isValidCell
-* isResClassIII​
-* isPentagon
+* h3_latlng_to_cell
+* h3_cell_to_lat
+* h3_cell_to_lng
+* h3_cell_to_parent
+* h3_get_resolution
+* h3_get_base_cell_number​
+* h3_string_to_h3​
+* h3_h3_to_string​
+* h3_is_valid_cell
+* h3_is_res_class_iii
+* h3_is_pentagon
 
 # TODO
 

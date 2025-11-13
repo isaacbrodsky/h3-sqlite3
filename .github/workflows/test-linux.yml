@@ -34,7 +34,7 @@ jobs:
       - name: Install Doxygen
         run: |
           sudo apt update
-          sudo apt-get install doxygen graphviz clang-format-9
+          sudo apt-get install doxygen graphviz clang-format-14
 
       - name: Configure build
         run: cmake -Bbuild -DBUILD_SHARED_LIBS=ON -DWARNINGS_AS_ERRORS=ON .
@@ -42,7 +42,7 @@ jobs:
       - name: Formatting check
         working-directory: build
         run: |
-          clang-format-9 --version
+          clang-format-14 --version
           make format
           git diff --exit-code
 
