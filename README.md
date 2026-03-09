@@ -1,5 +1,6 @@
 # h3-sqlite3
 
+[![Coverage Status](https://coveralls.io/repos/github/isaacbrodsky/h3-sqlite3/badge.svg?branch=master)](https://coveralls.io/github/isaacbrodsky/h3-sqlite3?branch=master)
 [![test-linux](https://github.com/isaacbrodsky/h3-sqlite3/workflows/test-linux/badge.svg)](https://github.com/isaacbrodsky/h3-sqlite3/actions)
 [![H3 Version](https://img.shields.io/static/v1?label=h3&message=v4.4.1&color=blue)](https://github.com/uber/h3/releases/tag/v4.4.1)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
